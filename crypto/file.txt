@@ -1,0 +1,1 @@
+This is text I'm writing from the vim application within a crypto image.
