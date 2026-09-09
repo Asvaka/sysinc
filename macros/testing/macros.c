@@ -17,13 +17,9 @@ int main() {
 	/ 01010101 /
 	int c = 85;*/
 	/* 00101101 = 45*/
+
+
 	unsigned int d = 0xABCD0123;
-	
-	/*printf("%08lX, 04: %08lX\n", d, ROTATE(d, 4));*/
-	/*int i;
-	for (i = 0; i < 4; i++) {
-		printb(ROTATE(d, 4));
-	}*/
 	
 	printf("Pretate: ");
 	printb(d);
@@ -32,13 +28,6 @@ int main() {
 	printf("\n");
 	printf("%lu", (sizeof(d)*8)-4);
 	printf("\n");
-
-	/*int i;
-	for (i = 0; i < 9; i++) {
-		printb(ROTATE(d,i));
-		printf("\n");
-	}*/
-	/*printf("%d\n", CHOICE(a, b, c));*/
 	
 	return 0;
 }
