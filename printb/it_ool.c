@@ -4,7 +4,7 @@
 int main() {
 	/* & operator (Bits-As-BooleanArray): Goes down the line on each operand, comparing each bit on the byte. Every time two bits are both true, it adds true to the result. */
 	/* | operator (Bits-As-BooleanArray): Same as the & operator, except it checks if either bit is true. */
-	/* ^ operator (Bits-As-BooleanArray): Same as the ^ operator, except if either bit is true, it adds true to result, except if both are true, in which case it adds false to the result. The XOR operation.  */
+	/* ^ operator (Bits-As-BooleanArray): Same as the & operator, except if either bit is true, it adds true to result, except if both are true, in which case it adds false to the result. The XOR operation.  */
 	/* ~ operator (Bits-As-Boolean): Negates the operand and subtracts one from it. */
 	/* && operator (Bits-As-Boolean): If both operands are at least 1, returns true (1). Otherwise, returns false (0). */
 	/* || operator (Bits-As-Boolean): If either operand is at least 1, returns true (1). Otherwise, returns false (0). */
