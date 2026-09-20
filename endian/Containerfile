@@ -1,0 +1,6 @@
+FROM ubuntu
+
+RUN apt update && apt install libc-dev gcc vim -y
+
+COPY option.c .
+COPY lipsum.txt .
