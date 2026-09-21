@@ -1,5 +1,7 @@
 FROM ubuntu
 
-RUN apt update && apt install gcc libc-dev
+RUN apt update && apt install gcc libc-dev -y
 
 COPY shainc.c .
+COPY rounds.c .
+COPY hashes.c .
