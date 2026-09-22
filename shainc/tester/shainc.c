@@ -11,8 +11,6 @@
 #define LSIG0(m) ((ROTATE(m,7)^ROTATE(m,18))^(m>>3))
 #define LSIG1(m) ((ROTATE(m,17)^ROTATE(m,19))^(m>>10))
 
-
-
 int main(int argc, char** argv) {
     uint8_t bytes[64];
     size_t l = 64;
@@ -30,7 +28,7 @@ int main(int argc, char** argv) {
         0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
     };
     /* Working Variables */
-    uint32_t a, b, c, d, e, f, g, h;/* = hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7];*/
+    uint32_t a, b, c, d, e, f, g, h;
 
     uint32_t temp1, temp2;
 
@@ -52,12 +50,6 @@ int main(int argc, char** argv) {
     while (l == 64) {
         l = fread(bytes, 1, 64, fp);
         length += l << 3;
-
-        /*printf("Input: ");
-        for (i = 0; i < l; i++) {
-            printf("%02x", bytes[i]);
-        }
-        printf("\n");*/
 
         /* Pre-Processing (Padding) */
         if (l != 64) {
@@ -93,7 +85,6 @@ int main(int argc, char** argv) {
         for (i = 16; i < 64; i++) {
             msa[i] = LSIG1(msa[i-2]) + msa[i-7] + LSIG0(msa[i-15]) + msa[i-16];
         }
-
 
         a = hash[0];
         b = hash[1];
@@ -192,8 +183,8 @@ int main(int argc, char** argv) {
         printf("%08x", hash[i]);
     }
 
-    printf("\n");
-
+    printf("  %s\n", argv[1]);
+	
     if (fclose(fp) == EOF) {
         fprintf(stderr, "Error: fclose fails on f_name \"%s\", exiting...\n", argv[1]);
     }

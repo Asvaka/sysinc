@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
         0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
     };
     /* Working Variables */
-    uint32_t a, b, c, d, e, f, g, h;/* = hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7];*/
+    uint32_t a, b, c, d, e, f, g, h;
 
     uint32_t temp1, temp2;
 
@@ -183,8 +183,8 @@ int main(int argc, char** argv) {
         printf("%08x", hash[i]);
     }
 
-    printf("\n");
-
+    printf("  %s\n", argv[1]);
+	
     if (fclose(fp) == EOF) {
         fprintf(stderr, "Error: fclose fails on f_name \"%s\", exiting...\n", argv[1]);
     }
