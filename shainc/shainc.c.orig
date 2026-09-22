@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "rounds.c"
+#include "hashes.c"
 
 #define ROTATE(e, f) (((e)>>(f))|((e)<<((sizeof(e)*8)-f)))
 #define SIG0(m) ((ROTATE(m,2)^ROTATE(m,13))^ROTATE(m,11))
@@ -23,12 +24,12 @@ int main(int argc, char** argv) {
     /* Message Schedule Array */
     uint32_t msa[64];
     /* Hash Tracker */
-    uint32_t hash[8] = {
-        0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,
-        0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
-    };
+uint32_t h[8] = {
+    0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,
+    0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
+};
     /* Working Variables */
-    uint32_t a, b, c, d, e, f, g, h = hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7];
+    uint32_t a, b, c, d, e, f, g, h;
 
     int final_exists = 0;
 
@@ -44,12 +45,23 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    /* Set-Up */
+    memcpy(hash, h, sizeof(h));
+    a = hash[0];
+    b = hash[1];
+    c = hash[2];
+    d = hash[3];
+    e = hash[4];
+    f = hash[5];
+    g = hash[6];
+    h = hash[7];
+
     /* While the last processed chunk is a full 512 bits */
     while (l == 64) {
         l = fread(bytes, 1, 64, fp);
         length += l << 3;
 
-        /* Pre-Processing (Padding) */
+	/* Pre-Processing (Padding) */
         if (l != 64) {
             bytes[l] = 1 << 7;
             if (64-(l+1) > 8) {
@@ -75,16 +87,16 @@ int main(int argc, char** argv) {
             }
         }
 
-        /* Set Message Schedule Array */
+	/* Set Message Schedule Array */
         for (i = 0; i < 16; i++) {
-            msa[i] = (bytes[i*4] << 24) | (bytes[(i*4)+1] << 16) | (bytes[(i*4)+2] << 8) | bytes[(i*4)+3];
+	    msa[i] = (bytes[i*4] << 24) | (bytes[(i*4)+1] << 16) | (bytes[(i*4)+2] << 8) | bytes[(i*4)+3];
         }
+	
+	for (i = 16; i < 64; i++) {
+		msa[i] = LSIG1(msa[i-2]) + msa[i-7] + LSIG0(msa[i-15]) + msa[i-16];
+	}
 
-        for (i = 16; i < 64; i++) {
-            msa[i] = LSIG1(msa[i-2]) + msa[i-7] + LSIG0(msa[i-15]) + msa[i-16];
-        }
-
-        /* Main Loop */
+	/* Main Loop */
 
         /* For every byte we have just read */
         /*for (i = 0; i < 64; i++) {
@@ -148,7 +160,7 @@ int main(int argc, char** argv) {
         }*/
     }
 
-    hash[0] = 1;
+	hash[0] = 1;
 
     for (i = 0; i < 64; i++) {
         printf("%032b\n", msa[i]);
