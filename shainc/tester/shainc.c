@@ -11,6 +11,8 @@
 #define LSIG0(m) ((ROTATE(m,7)^ROTATE(m,18))^(m>>3))
 #define LSIG1(m) ((ROTATE(m,17)^ROTATE(m,19))^(m>>10))
 
+
+
 int main(int argc, char** argv) {
     uint8_t bytes[64];
     size_t l = 64;
@@ -51,6 +53,12 @@ int main(int argc, char** argv) {
         l = fread(bytes, 1, 64, fp);
         length += l << 3;
 
+        /*printf("Input: ");
+        for (i = 0; i < l; i++) {
+            printf("%02x", bytes[i]);
+        }
+        printf("\n");*/
+
         /* Pre-Processing (Padding) */
         if (l != 64) {
             bytes[l] = 1 << 7;
@@ -85,6 +93,7 @@ int main(int argc, char** argv) {
         for (i = 16; i < 64; i++) {
             msa[i] = LSIG1(msa[i-2]) + msa[i-7] + LSIG0(msa[i-15]) + msa[i-16];
         }
+
 
         a = hash[0];
         b = hash[1];

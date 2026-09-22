@@ -4,7 +4,7 @@ os.system("podman build -t shainc .")
 
 print()
 
-command = "gcc " + input('File to compile: ') + " -lm -Wall -Wextra -Werror -Wpedantic -O2; ./a.out " + input('Test input: ')
+command = "gcc " + input('File to compile: ') + " -lm -std=c89 -Wall -Wextra -Werror -Wpedantic -O2; ./a.out " + input('Test input: ')
 
 print()
 
