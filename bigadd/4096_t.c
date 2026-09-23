@@ -71,9 +71,6 @@ int main() {
 	fprintf(stderr, "%lu\n", bigadd(in0, in1, sum));
 	fprintf(stderr, "Sum: \n");
 	seebig(sum);
-	/*for (i = 0; i < S; i++) {
-		printf("dif[%02lx] = %02lx\n", i, dif[i]);
-	}*/
 
 	return 0;
 }
