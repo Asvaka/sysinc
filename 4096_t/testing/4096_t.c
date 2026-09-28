@@ -27,20 +27,18 @@ uint64_t bigadd(uint64_t *in0, uint64_t *in1, uint64_t *sum) {
 }
 
 uint64_t bigmul(uint64_t *in0, uint64_t *in1, uint64_t *out) {
-	size_t i, j, k;
+	size_t i, j;
 	uint64_t carry = 0, true_carry = 0, tmp;
-	(void)tmp;
-	/* For each 64-bit int in the left operand */
-	for (k = 0; k < S; k++) {
+	(void)tmp;	
 	/* For every bit in each 64-bit int */
 	for (j = 0; j < 64; j++) {
-		/* For every 64-bit int in the right operand */
+		/* For every 64-bit int passed */
 		for (i = 0; i < S; i++) {
 			/* Get the j-th binary digit of in0[i] */
 			if ((in0[i] << (63-j)) >> 63) { 
 				tmp = in1[i] << j;
 
-				out[i] += (in1[i] << j);
+				out[i] += carry + (in1[i] << j);
 				carry = in1[i] >> (64-j);
 			}
 		}
@@ -48,9 +46,8 @@ uint64_t bigmul(uint64_t *in0, uint64_t *in1, uint64_t *out) {
 		carry = 0;
 
 	}
-	}
 
-	return true_carry;
+	return carry;
 }
 
 uint64_t bigquo(uint64_t *num, uint64_t *den, uint64_t *quo) {
@@ -79,54 +76,3 @@ void seebig(uint64_t *a) {
 	return;
 }
 
-int main() {
-	uint64_t min[S], sub[S], dif[S];
-	uint64_t in0[S], in1[S], sum[S], out[S];
-	size_t i;
-	memset(min, 0, BYTES);
-	memset(sub, 0, BYTES);
-	memset(in0, 0, BYTES);
-	memset(in1, 0, BYTES);
-	for (i = 0; i < S; i++) {
-		min[i] = i*3;
-		sub[i] = i*2;
-	}
-	for (i = 0; i < S; i++) {
-		in0[i] = i*3;
-		in1[i] = i*5;
-	}
-
-	(void)min;
-	(void)sub;
-	(void)dif;
-	(void)sum;
-
-	/*fprintf(stderr, "First Subtraction Input: \n");
-	seebig(min);
-	fprintf(stderr, "Second Subtraction Input: \n");
-	seebig(sub);
-	fprintf(stderr, "Carry: \n");
-	fprintf(stderr, "%lu\n", bigsub(min, sub, dif));
-	fprintf(stderr, "Difference: \n");
-	seebig(dif);
-
-	fprintf(stderr, "First Addition Input: \n");
-	seebig(in0);
-	fprintf(stderr, "Second Addition Input: \n");
-	seebig(in1);
-	fprintf(stderr, "Carry: \n");
-	fprintf(stderr, "%lu\n", bigadd(in0, in1, sum));
-	fprintf(stderr, "Sum: \n");
-	seebig(sum);*/
-
-	fprintf(stderr, "First Multiplication Input: \n");
-	seebig(in0);
-	fprintf(stderr, "Second Multiplication Input: \n");
-	seebig(in1);
-	fprintf(stderr, "Carry: \n");
-	fprintf(stderr, "%lu\n", bigmul(in0, in1, out));
-	fprintf(stderr, "Sum: \n");
-	seebig(out);
-
-	return 0;
-}
