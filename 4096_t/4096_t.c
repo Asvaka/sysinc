@@ -30,27 +30,25 @@ uint64_t bigmul(uint64_t *in0, uint64_t *in1, uint64_t *out) {
 	size_t i, j, k;
 	uint64_t carry = 0, true_carry = 0, tmp;
 	(void)tmp;
-	/* For each 64-bit int in the left operand */
-	for (k = 0; k < S; k++) {
-	/* For every bit in each 64-bit int */
-	for (j = 0; j < 64; j++) {
-		/* For every 64-bit int in the right operand */
-		for (i = 0; i < S; i++) {
-			/* Get the j-th binary digit of in0[i] */
-			if ((in0[i] << (63-j)) >> 63) { 
-				tmp = in1[i] << j;
-
-				out[i] += (in1[i] << j);
-				carry = in1[i] >> (64-j);
+	(void)carry;
+	(void)true_carry;
+	/* For each 64-bit int in the right operand */
+	for (k = 2; k < 3; k++) {
+		/*fprintf(stderr, "Desired value: %x\n", 0x6 * 0xa);*/
+		/* For every 64-bit int in the left operand */
+		for (j = 0; j < S; j++) {
+			/* For every bit in each 64-bit int */
+			for (i = 0; i < 64; i++) {
+				/* Get the i-th binary digit of in0[j] */
+				if ((in0[j] << (63-i)) >> 63) {
+					out[j] += (in1[k] << i);
+					/*fprintf(stderr, "Hit on operand %lu: shifting %lx by %lu, to add %lx\n", j, in1[k], i, in1[k] << i);*/
+				}
 			}
 		}
-		true_carry += carry;
-		carry = 0;
-
-	}
 	}
 
-	return true_carry;
+	return 0;
 }
 
 uint64_t bigquo(uint64_t *num, uint64_t *den, uint64_t *quo) {
@@ -69,7 +67,7 @@ uint64_t bigrem(uint64_t *num, uint64_t *den, uint64_t *rem) {
 
 void seebig(uint64_t *a) {
 	size_t i;
-	for (i = S-1; i > 0; i--) {
+	for (i = S-1; i < S; i--) {
 		fprintf(stderr, "%016lx ", a[i]);
 		if ((i % 8 == 0 && i)) {
 			fprintf(stderr, "\n");
@@ -87,13 +85,14 @@ int main() {
 	memset(sub, 0, BYTES);
 	memset(in0, 0, BYTES);
 	memset(in1, 0, BYTES);
+	memset(out, 0, BYTES);
 	for (i = 0; i < S; i++) {
-		min[i] = i*3;
-		sub[i] = i*2;
+		min[i] = (i+1)*3;
+		sub[i] = (i+1)*2;
 	}
 	for (i = 0; i < S; i++) {
-		in0[i] = i*3;
-		in1[i] = i*5;
+		in0[i] = (i+1)*3;
+		in1[i] = (i+1)*5;
 	}
 
 	(void)min;
@@ -125,7 +124,7 @@ int main() {
 	seebig(in1);
 	fprintf(stderr, "Carry: \n");
 	fprintf(stderr, "%lu\n", bigmul(in0, in1, out));
-	fprintf(stderr, "Sum: \n");
+	fprintf(stderr, "Product: \n");
 	seebig(out);
 
 	return 0;
