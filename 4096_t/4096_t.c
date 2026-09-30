@@ -28,27 +28,40 @@ uint64_t bigadd(uint64_t *in0, uint64_t *in1, uint64_t *sum) {
 
 uint64_t bigmul(uint64_t *in0, uint64_t *in1, uint64_t *out) {
 	size_t i, j, k;
-	uint64_t carry = 0, true_carry = 0, tmp;
-	(void)tmp;
+	uint64_t carry = 0, tmp = 0;
+    	uint64_t wrk[S*2 + 1];
+    	uint32_t *al0 = (uint32_t *)in0, *al1 = (uint32_t *)in1 , *alw = (uint32_t *)wrk, *alo = (uint32_t *)out;
+
+	(void)alw;
 	(void)carry;
-	(void)true_carry;
-	/* For each 64-bit int in the right operand */
-	for (k = 2; k < 3; k++) {
-		/*fprintf(stderr, "Desired value: %x\n", 0x6 * 0xa);*/
-		/* For every 64-bit int in the left operand */
-		for (j = 0; j < S; j++) {
-			/* For every bit in each 64-bit int */
-			for (i = 0; i < 64; i++) {
-				/* Get the i-th binary digit of in0[j] */
-				if ((in0[j] << (63-i)) >> 63) {
-					out[j] += (in1[k] << i);
-					/*fprintf(stderr, "Hit on operand %lu: shifting %lx by %lu, to add %lx\n", j, in1[k], i, in1[k] << i);*/
+
+	/* Goal is to simulate bit shifting entire right operand every time we see a "yes" binary with i */
+	for (k = 0; k < 4; k++) {
+		/*fprintf(stderr, "Testing %lu-th: %x\n", k, al1[k]);*/
+		/*fprintf(stderr, "Testing value: %x\n", al1[k]);*/
+		for (j = 0; j < 4; j++) {
+			tmp = 0;
+			for (i = 0; i < 32; i++) {
+				if((al0[j] << (31-i)) >> 31) {
+					/* Need to watch for overflow in the output as well */
+					/* Two types of overflow: Operand Multiplication overflow, and Carry Addition overflow */
+					tmp += ((uint64_t)al1[k] << i);
+					/* Operand Multiplication is taken care of here with the shifting back and forth */
+					/* Carry Addition still needs to be adressed. Check if shifted operand + tmp goes over?*/
+					/*fprintf(stderr, "TMP: %lx\n", tmp);*/
+					/*if(j+k == 2){
+					fprintf(stderr, "Hit on operand %lu: shifting %lx by %lu bits, to add %lx on space %lu, with current tmp %lx\n", j, (uint64_t)al1[k], i, (uint64_t)al1[k] << i, j+k, tmp);
+					}*/
 				}
 			}
+			carry = (alo[j+k] + (uint32_t)tmp) < alo[j+k];
+			alo[j+k] += (uint32_t)tmp;
+			alo[j+k+1] += carry + (uint32_t)(tmp >> 32);
+			/*fprintf(stderr, "TMP: %lb\nTMP Shortened: %b\nTMP Shortened & Shifted: %b\n", tmp, (uint32_t)tmp, (uint32_t)(tmp >> 32));*/
 		}
 	}
 
-	return 0;
+	return (tmp >> 32);
 }
 
 uint64_t bigquo(uint64_t *num, uint64_t *den, uint64_t *quo) {
@@ -77,6 +90,12 @@ void seebig(uint64_t *a) {
 	return;
 }
 
+void seebinary(uint64_t *a) {
+	fprintf(stderr, "%064lb", a[0]);
+	fprintf(stderr, "\n\n");
+	return;
+}
+
 int main() {
 	uint64_t min[S], sub[S], dif[S];
 	uint64_t in0[S], in1[S], sum[S], out[S];
@@ -90,8 +109,8 @@ int main() {
 		min[i] = (i+1)*3;
 		sub[i] = (i+1)*2;
 	}
-	for (i = 0; i < S; i++) {
-		in0[i] = (i+1)*3;
+	for (i = 0; i < S/2; i++) {
+		in0[i] = (i+1)*(16*100000000);
 		in1[i] = (i+1)*5;
 	}
 
