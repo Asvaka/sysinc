@@ -28,40 +28,38 @@ uint64_t bigadd(uint64_t *in0, uint64_t *in1, uint64_t *sum) {
 
 uint64_t bigmul(uint64_t *in0, uint64_t *in1, uint64_t *out) {
 	size_t i, j, k;
-	uint64_t carry = 0, tmp = 0;
-    	uint64_t wrk[S*2 + 1];
-    	uint32_t *al0 = (uint32_t *)in0, *al1 = (uint32_t *)in1 , *alw = (uint32_t *)wrk, *alo = (uint32_t *)out;
+	uint64_t carry = 0;
+    	uint64_t wrk[S + 1];
+    	uint32_t *al0 = (uint32_t *)in0, *al1 = (uint32_t *)in1 , *alw = (uint32_t *)wrk;
 
-	(void)alw;
-	(void)carry;
+	memset(wrk, 0, BYTES + sizeof(uint64_t));
 
-	/* Goal is to simulate bit shifting entire right operand every time we see a "yes" binary with i */
-	for (k = 0; k < 4; k++) {
-		/*fprintf(stderr, "Testing %lu-th: %x\n", k, al1[k]);*/
-		/*fprintf(stderr, "Testing value: %x\n", al1[k]);*/
-		for (j = 0; j < 4; j++) {
-			tmp = 0;
-			for (i = 0; i < 32; i++) {
-				if((al0[j] << (31-i)) >> 31) {
-					/* Need to watch for overflow in the output as well */
-					/* Two types of overflow: Operand Multiplication overflow, and Carry Addition overflow */
-					tmp += ((uint64_t)al1[k] << i);
-					/* Operand Multiplication is taken care of here with the shifting back and forth */
-					/* Carry Addition still needs to be adressed. Check if shifted operand + tmp goes over?*/
-					/*fprintf(stderr, "TMP: %lx\n", tmp);*/
-					/*if(j+k == 2){
-					fprintf(stderr, "Hit on operand %lu: shifting %lx by %lu bits, to add %lx on space %lu, with current tmp %lx\n", j, (uint64_t)al1[k], i, (uint64_t)al1[k] << i, j+k, tmp);
-					}*/
+	/* For i-th entry in al0 (left operand) */
+	for (i = 0; i < S*2; i++) {
+		/* For each bit */
+		for (k = 0; k < 32; k++) {
+			/* If there is a postive bit at this location */
+			if ((al0[i] << (31-k)) >> 31) {
+				/* For j-th entry in al1 (right operand), starting from the left-most term */
+				/* Basically, shift the right operand over k bits */
+				for (j = (S*2)-1; j < S*2; j--) {
+					/* Make sure we don't go out of the array bounds */	
+					if (i+j < (S*2)+1) {
+						/* Take the overflow of multiplication and add it to the previous slot */
+						alw[i+j+1] = alw[i+j+1] | (uint32_t)(((uint64_t)al1[j] << k) >> 32);
+						/* Shift the current term and add it to the working variable */
+						alw[i+j] = (al1[j] << k);
+					}
 				}
+				/* Add that shifted number back into the output */
+				carry = bigadd(wrk, out, out);
+				/* Reset the working variable */
+				memset(wrk, 0, BYTES + sizeof(uint64_t));
 			}
-			carry = (alo[j+k] + (uint32_t)tmp) < alo[j+k];
-			alo[j+k] += (uint32_t)tmp;
-			alo[j+k+1] += carry + (uint32_t)(tmp >> 32);
-			/*fprintf(stderr, "TMP: %lb\nTMP Shortened: %b\nTMP Shortened & Shifted: %b\n", tmp, (uint32_t)tmp, (uint32_t)(tmp >> 32));*/
 		}
 	}
-
-	return (tmp >> 32);
+	
+	return carry;
 }
 
 uint64_t bigquo(uint64_t *num, uint64_t *den, uint64_t *quo) {
@@ -91,9 +89,25 @@ void seebig(uint64_t *a) {
 }
 
 void seebinary(uint64_t *a) {
-	fprintf(stderr, "%064lb", a[0]);
+	size_t i;
+	for (i = S-1; i < S; i--) {
+		fprintf(stderr, "%064lb", a[i]);
+		if ((i % 8 == 0 && i)) {
+			fprintf(stderr, "\n");
+		}
+	}
 	fprintf(stderr, "\n\n");
 	return;
+}
+
+uint64_t generateRandom2048Bit(uint64_t *s) {
+	FILE *fp = fopen("/dev/urandom", "r");
+	size_t l;
+
+	l = fread(s, 8, S/2, fp);
+	fclose(fp);
+
+	return l;
 }
 
 int main() {
@@ -109,10 +123,9 @@ int main() {
 		min[i] = (i+1)*3;
 		sub[i] = (i+1)*2;
 	}
-	for (i = 0; i < S/2; i++) {
-		in0[i] = (i+1)*(16*100000000);
-		in1[i] = (i+1)*5;
-	}
+	
+	generateRandom2048Bit(in0);
+	generateRandom2048Bit(in1);
 
 	(void)min;
 	(void)sub;
@@ -139,12 +152,15 @@ int main() {
 
 	fprintf(stderr, "First Multiplication Input: \n");
 	seebig(in0);
+	seebinary(in0);
 	fprintf(stderr, "Second Multiplication Input: \n");
 	seebig(in1);
+	seebinary(in1);
 	fprintf(stderr, "Carry: \n");
 	fprintf(stderr, "%lu\n", bigmul(in0, in1, out));
 	fprintf(stderr, "Product: \n");
 	seebig(out);
+	seebinary(out);
 
 	return 0;
 }
