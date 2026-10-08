@@ -1,0 +1,8 @@
+FROM ubuntu
+
+RUN apt update && apt install libc-dev gcc vim python3 libgmp3-dev -y
+
+COPY ops_ui.h .
+COPY ops_ui.c .
+COPY biggmp.c .
+COPY 4096_t.h .
