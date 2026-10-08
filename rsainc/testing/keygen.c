@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-uint16_t is_prime(uint16_t n) {
+uint64_t is_prime(uint64_t n) {
 	size_t i;
 	
 	for (i = 2; i < ((n/2)+1); i++) {
@@ -16,7 +16,7 @@ uint16_t is_prime(uint16_t n) {
 	return 1;
 }
 
-uint16_t sixkp1(uint16_t k) {
+uint64_t sixkp1(uint64_t k) {
 	size_t candidate = 6 * k + 1;
 	while (!is_prime(candidate)) {
 		candidate += 6;
@@ -38,9 +38,9 @@ uint64_t lcm(uint64_t a, uint64_t b) {
 	return (a * b) / gcd(a, b);
 }
 
-uint16_t generateRandom16Bit() {
+uint32_t generateRandom32Bit() {
 	FILE *fp = fopen("/dev/urandom", "r");
-	uint16_t rd_num;
+	uint32_t rd_num;
 	size_t l;
 
 	/* Now returns 16 bit int */
@@ -60,7 +60,7 @@ uint64_t find_d(uint64_t e, uint64_t lmdb) {
 }
 
 int main() {
-	size_t p = sixkp1((uint32_t)generateRandom16Bit()), q = sixkp1((uint32_t)generateRandom16Bit());
+	size_t p = sixkp1((uint32_t)generateRandom32Bit()), q = sixkp1((uint32_t)generateRandom32Bit());
 
 	char* hd = "-----BEGIN";
 	char* ft = "-----END";

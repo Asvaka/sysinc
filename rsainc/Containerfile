@@ -2,5 +2,7 @@ FROM ubuntu
 
 RUN apt update && apt install libc-dev gcc python3 vim -y
 
+COPY rsainc.c .
 COPY keygen.c .
 COPY testing.py .
+COPY cd.txt .
