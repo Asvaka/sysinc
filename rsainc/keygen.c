@@ -4,7 +4,7 @@
 
 
 uint16_t is_prime(uint16_t n) {
-	size_t i;
+	uint16_t i;
 	
 	for (i = 2; i < ((n/2)+1); i++) {
 		if (!(n % i)) {
@@ -47,6 +47,8 @@ uint16_t generateRandom16Bit() {
 	l = fread(&rd_num, 2, 1, fp);
 	(void)l;
 	fclose(fp);
+
+	rd_num = rd_num % (5460 - 10000 - 1) + 5460;
 
 	return rd_num;
 }

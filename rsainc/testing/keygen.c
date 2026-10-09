@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 
-uint64_t is_prime(uint64_t n) {
-	size_t i;
+uint16_t is_prime(uint16_t n) {
+	uint16_t i;
 	
 	for (i = 2; i < ((n/2)+1); i++) {
 		if (!(n % i)) {
@@ -16,7 +16,7 @@ uint64_t is_prime(uint64_t n) {
 	return 1;
 }
 
-uint64_t sixkp1(uint64_t k) {
+uint16_t sixkp1(uint16_t k) {
 	size_t candidate = 6 * k + 1;
 	while (!is_prime(candidate)) {
 		candidate += 6;
@@ -38,15 +38,17 @@ uint64_t lcm(uint64_t a, uint64_t b) {
 	return (a * b) / gcd(a, b);
 }
 
-uint32_t generateRandom32Bit() {
+uint16_t generateRandom16Bit() {
 	FILE *fp = fopen("/dev/urandom", "r");
-	uint32_t rd_num;
+	uint16_t rd_num;
 	size_t l;
 
 	/* Now returns 16 bit int */
 	l = fread(&rd_num, 2, 1, fp);
 	(void)l;
 	fclose(fp);
+
+	rd_num = rd_num % (5460 - 10000 - 1) + 5460;
 
 	return rd_num;
 }
@@ -60,7 +62,7 @@ uint64_t find_d(uint64_t e, uint64_t lmdb) {
 }
 
 int main() {
-	size_t p = sixkp1((uint32_t)generateRandom32Bit()), q = sixkp1((uint32_t)generateRandom32Bit());
+	size_t p = sixkp1((uint32_t)generateRandom16Bit()), q = sixkp1((uint32_t)generateRandom16Bit());
 
 	char* hd = "-----BEGIN";
 	char* ft = "-----END";
