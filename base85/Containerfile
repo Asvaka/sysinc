@@ -1,0 +1,7 @@
+FROM ubuntu
+
+RUN apt update && apt install python3 gcc libc-dev vim -y
+
+COPY base85.py .
+COPY base85.c .
+COPY est.txt .
