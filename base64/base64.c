@@ -37,28 +37,28 @@ int main() {
 	char *str = "ABC";
 	int i;
 	uint32_t tmp = 0, tmp2 = 0;
-	uint8_t *alias = (uint8_t *)&tmp, *alias2 = (uint8_t *)&tmp2;;
+	uint8_t *alias = (uint8_t *)&tmp, *alias2 = (uint8_t *)&tmp2;
 	uint8_t test = 0;
 	(void)tmp2;
 	(void)alias;
 	test = str[0];
 	printf("%c\n", num_to_b64(((uint8_t)(test<<2))>>2));
-	printf("%b\n", str[0]);
-	printf("%b\n", ((uint8_t)(test<<2))>>2);
+	/*printf("%b\n", str[0]);
+	printf("%b\n", ((uint8_t)(test<<2))>>2);*/
 	printf("%lu\n", sizeof(test));
 
 	for (i = 0; i < 3; i++) {
 		tmp += ((uint32_t)str[i]) << (8*i);
 	}
 	tmp = end_24(tmp);
-	printf("%024b\n", tmp);
+	/*printf("%024b\n", tmp);*/
 	for (i = 3; i > -1; i--) {
-		printf("%08b\n", num_to_b64(conv32to8(tmp, i)));
+		/*printf("%08b\n", num_to_b64(conv32to8(tmp, i)));*/
 		printf("%c\n", num_to_b64(conv32to8(tmp, i)));
 		tmp2 += num_to_b64(conv32to8(tmp, i));
 		/*alias[i] = num_to_b64(alias[i]);*/
 	}
-	printf("%024b\n", tmp2);
+	/*printf("%024b\n", tmp2);*/
 	/*tmp = end_24(tmp);*/
 	for (i = 0; i < 4; i++) {
 		printf("%c", alias2[i]);
