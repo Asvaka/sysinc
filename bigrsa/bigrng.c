@@ -16,10 +16,3 @@ void prigmp(uint64_t *big, uint8_t words) {
 	mpz_clear(m);
 	return;
 }
-
-int main() {
-	uint64_t bignum[S];
-	prigmp(bignum, S);
-	seebig(bignum);
-	return 0;
-}
