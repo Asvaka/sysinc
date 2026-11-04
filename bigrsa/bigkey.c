@@ -30,9 +30,9 @@ void biggcd(uint64_t *a, uint64_t *b) {
 			} 
 		}
 	}
-	printf("Number of iterations: %d\n", count);
+	/*printf("Number of iterations: %d\n", count);
 	printf("After run:\n");
-	seebig(a);
+	seebig(a);*/
 	return;
 }
 
@@ -72,19 +72,22 @@ int main(int argc, char**argv) {
 	}
 	(void)argv;
 	printf("\n");
-	/*memset(bignum, 0, BYTES);
+	memset(bignum, 0, BYTES);
 	memset(bigtwo, 0, BYTES);
 	bignum[0] = 6;
-	bigtwo[0] = 9;*/
-	prigmp(bignum, S);
-	prigmp(bigtwo, S);
+	bigtwo[0] = 9;
+	/*prigmp(bignum, S/2);
+	prigmp(bigtwo, S/2);
 	sub_ui(bignum, 1, tmp);
 	memcpy(bignum, tmp, BYTES);
 	seebig(bignum);
 	sub_ui(bigtwo, 1, tmp);
 	memcpy(bigtwo, tmp, BYTES);
-	seebig(bigtwo);
-	biggcd(bignum, bigtwo);
+	seebig(bigtwo);*/
+	biglcm(bignum, bigtwo);
+	printf("Bignum:\n");
 	seebig(bignum);
+	printf("\nBigtwo:\n");
+	seebig(bigtwo);
 	return 0;
 }
