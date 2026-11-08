@@ -1,29 +1,27 @@
 #include "list_t.h"
 
-/*struct list {
+struct list_struct {
 	size_t list_size;
 	size_t arr_size;
 	void **list_arr;
 };
 
 list_t list_new() {
-	list_t l = malloc(sizeof(size_t));
-	l->list_size = 0;
+	list_t l = malloc(sizeof(struct list_struct));
+	l->list_size = 1;
 	l->arr_size = 0;
-	l->list_arr = 1;
+	l->list_arr = malloc(sizeof(void*));
 	return l;
-}*/
+}
 
-struct list {
-	int x;
-	void **list_arr;
-};
+void list_free(list_t l) {
+	free(l->list_arr);
+	free(l);
+}
 
-list_t list_new() {
-	list_t l = malloc(sizeof(int) + (sizeof(void*) * 2));
-	l->x = 1;
-	l->list_arr[0] = 0;
-	return l;
+void list_print(list_t l) {
+	/* TODO */
+	return 0;
 }
 
 int main() {
@@ -33,6 +31,6 @@ int main() {
 	printf("%ld\n", (size_t)list[0]);
 	list[1] = (void*)6;
 	printf("%ld\n", (size_t)list[1]);*/
-	free(list);
+	list_free(list);
 	return 0;
 }
