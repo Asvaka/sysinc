@@ -24,14 +24,14 @@ void list_free(list_t l) {
 void list_print(list_t l) {
 	size_t i;
 	if (l->list_size == 0) {
-		printf("[]\n");
+		printf("[]");
 		return;
 	}
 	printf("[");
 	for (i = 0; i < l->list_size - 1; i++) {
 		printf("%lu, ", (uint64_t)(l->list_arr[i]));
 	}
-	printf("%lu]\n", (uint64_t)(l->list_arr[l->list_size-1]));
+	printf("%lu]", (uint64_t)(l->list_arr[l->list_size-1]));
 	return;
 }
 
@@ -61,17 +61,93 @@ void list_append(list_t l, void *x) {
 	return;
 }
 
-int main() {
-	list_t list = list_new();
-	size_t i;
-
-	list_print(list);
-
-	for (i = 1; i < 11; i++) {
-		list_append(list, (void*)i);
-		list_print(list);
+void list_extend(list_t l1, list_t l2) {
+	size_t i, new_s;
+	void** tmp;
+	/* If we don't need to resize l1, just copy elements over */
+	if (l1->list_size + l2->list_size <= l1->arr_size) {
+		for (i = 0; i < l2->list_size; i++) {
+			l1->list_arr[l1->list_size + i] = l2->list_arr[i];
+		}
+		l1->list_size += l2->list_size;
+		return;
 	}
 
-	list_free(list);
+	/* If we do need to resize l1 */
+
+	/* Start with the bigger array size */
+	if (l1->arr_size > l2->arr_size) {
+		new_s = l1->arr_size;
+	}
+	else {
+		new_s = l2->arr_size;
+	}
+	
+	/* Count up to obtain the new arr_size which can fit all elements,
+	 * while maintaining the property that arr_size is a multiple of 2 */
+	while (new_s < l1->list_size + l2->list_size) {
+		new_s *= 2;
+	}
+
+	/* Make the new array and copy over all values into it,
+	 * appending l2 to the l1 values in the process */
+	tmp = malloc(sizeof(void*) * new_s);
+	for (i = 0; i < l1->list_size; i++) {
+		tmp[i] = l1->list_arr[i];
+	}
+	for (i = 0; i < l2->list_size; i++) {
+		tmp[l1->list_size + i] = l2->list_arr[i];
+	}
+	
+	/* Remember to update the list_size */
+	l1->list_size += l2->list_size;
+
+	/* Swap the old array for the new one */
+	free(l1->list_arr);
+	l1->list_arr = tmp;
+
+	return;
+}
+
+int main() {
+	list_t l = list_new();
+	list_t l2 = list_new();
+	size_t i;
+
+
+	for (i = 1; i < 6; i++) {
+		list_append(l, (void*)i);
+	}
+
+	printf("Initial list: ");
+	list_print(l);
+	printf("\n");
+
+	for (i = 1; i < 6; i++) {
+		list_append(l2, (void*)(i * 100));
+	}
+
+	printf("Second list: ");
+	list_print(l2);
+	printf("\n");
+
+	list_extend(l, l2);
+
+	printf("After extension:\nl: ");
+	list_print(l);
+	printf("\nl2: ");
+	list_print(l2);
+	printf("\n");
+
+	l2->list_arr[0] = (void*)200;
+
+	printf("After l2 change:\nl: ");
+	list_print(l);
+	printf("\nl2: ");
+	list_print(l2);
+	printf("\n");
+
+	list_free(l);
+	list_free(l2);
 	return 0;
 }
