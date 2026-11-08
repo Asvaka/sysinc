@@ -1,0 +1,6 @@
+FROM ubuntu
+
+RUN apt update && apt install libc-dev gcc libgmp3-dev vim python3 -y
+
+COPY list_t.h .
+COPY list_t.c .
