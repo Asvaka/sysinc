@@ -168,7 +168,7 @@ void* list_pop(list_t l, size_t i) {
 	size_t j, k;
 	void* tmp;
 	if (i > l->list_size) {
-		fprintf(stderr, "Error: List index out of bounds. Exiting...");
+		fprintf(stderr, "Error: List index out of bounds. Exiting...\n");
 		exit(1);
 	}
 	tmp = l->list_arr[i];
@@ -179,7 +179,41 @@ void* list_pop(list_t l, size_t i) {
 	return tmp;
 }
 
-int main() {
+void list_clear(list_t l) {
+	free(l->list_arr);
+	l->list_size = 0;
+	l->arr_size = 1;
+	l->list_arr = malloc(sizeof(void*));
+	return;
+}
+
+size_t list_index(list_t l, void *x) {
+	size_t i;
+
+	for (i = 0; i < l->list_size; i++) {
+		if (l->list_arr[i] == x) {
+			return i;
+		}
+	}
+	
+	fprintf(stderr, "Error: The requested object was not found in the list. Exiting...\n");
+	exit(1);
+}
+
+uint64_t list_count(list_t l, void *x) {
+	uint64_t count = 0;
+	size_t i;
+
+	for (i = 0; i < l->list_size; i++) {
+		if (l->list_arr[i] == x) {
+			count += 1;
+		}
+	}
+
+	return count;
+}
+
+/*int main() {
 	list_t l = list_new();
 	list_t l2 = list_new();
 	size_t i, tmp;
@@ -243,7 +277,31 @@ int main() {
 	list_print(l);
 	printf("\n\n");
 
+	list_clear(l);
+
+	printf("After clearing l:\nl: ");
+	list_print(l);
+	printf("\n\n");
+
+	for (i = 1; i < 6; i++) {
+		list_append(l, (void*)i);
+	}
+
+	printf("After refilling l:\nl: ");
+	list_print(l);
+	printf("\n\n");
+
+	printf("The index of 3 is %lu.\n\n", list_index(l, (void*)3));
+
+	list_append(l, (void*)3);
+
+	printf("After appending 3:\nl: ");
+	list_print(l);
+	printf("\n\n");
+
+	printf("There are %lu instances of 3 in l.\n\n", list_count(l, (void*)3));
+
 	list_free(l);
 	list_free(l2);
 	return 0;
-}
+}*/
