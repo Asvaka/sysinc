@@ -152,6 +152,7 @@ bool list_remove(list_t l, void *x) {
 	size_t i, j;
 
 	for (i = 0; i < l->list_size; i++) {
+		/* Once we find the item, move everything to the right of it left by one */
 		if (l->list_arr[i] == x) {
 			for (j = i; j < l->list_size-1; j++) {
 				l->list_arr[j] = l->list_arr[j+1];
@@ -171,10 +172,15 @@ void* list_pop(list_t l, size_t i) {
 		fprintf(stderr, "Error: List index out of bounds. Exiting...\n");
 		exit(1);
 	}
+
+	/* Save out return value */
 	tmp = l->list_arr[i];
+
+	/* Fills the new gap by shifting things to the left */
 	for (j = i; j < l->list_size-1; j++) {
 		l->list_arr[j] = l->list_arr[j+1];
 	}
+
 	l->list_size -= 1;
 	return tmp;
 }
@@ -190,6 +196,7 @@ void list_clear(list_t l) {
 size_t list_index(list_t l, void *x) {
 	size_t i;
 
+	/* Just search the list for the requested value */
 	for (i = 0; i < l->list_size; i++) {
 		if (l->list_arr[i] == x) {
 			return i;
@@ -204,6 +211,7 @@ uint64_t list_count(list_t l, void *x) {
 	uint64_t count = 0;
 	size_t i;
 
+	/* Just count the number of occurences of the requested value */
 	for (i = 0; i < l->list_size; i++) {
 		if (l->list_arr[i] == x) {
 			count += 1;
@@ -211,6 +219,34 @@ uint64_t list_count(list_t l, void *x) {
 	}
 
 	return count;
+}
+
+void list_reverse(list_t l) {
+	void **tmp;
+	int i;
+
+	tmp = malloc(sizeof(void*) * l->arr_size);
+
+	/* Essentially walk backward on the list_arr (implemented as forward on the tmp), copying values */
+	for (i = 0; i < l->list_size; i++) {
+		tmp[i] = l->list_arr[l->list_size - i - 1];
+	}
+
+	free(l->list_arr);
+	l->list_arr = tmp;
+
+	return;
+}
+
+list_t list_copy(list_t l) {
+	list_t new = malloc(sizeof(struct list_struct));
+
+	new->list_size = l->list_size;
+	new->arr_size = l->arr_size;
+	new->list_arr = malloc(sizeof(void*) * new->arr_size);
+	memcpy(new->list_arr, l->list_arr, l->list_size * sizeof(void*));
+
+	return new;
 }
 
 /*int main() {
@@ -300,6 +336,18 @@ uint64_t list_count(list_t l, void *x) {
 	printf("\n\n");
 
 	printf("There are %lu instances of 3 in l.\n\n", list_count(l, (void*)3));
+
+	list_reverse(l);
+
+	printf("After reversing l:\nl: ");
+	list_print(l);
+	printf("\n\n");
+
+	l2 = list_copy(l);
+
+	printf("l2 after copying l into it:\nl2: ");
+	list_print(l2);
+	printf("\n\n");
 
 	list_free(l);
 	list_free(l2);
