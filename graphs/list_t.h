@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* Implement booleans */
 
@@ -224,6 +225,8 @@ void list_reverse(list_t l);
  - should print "[1, 1]" then "[1]"
  */
 list_t list_copy(list_t l);
+
+void list_map_void(list_t l, void (*func)(void*));
 
 #endif
 

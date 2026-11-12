@@ -4,3 +4,9 @@ RUN apt update && apt install libc-dev gcc libgmp3-dev vim valgrind python3 -y
 
 COPY graph_t.h .
 COPY graph_t.c .
+COPY list_t.h .
+COPY list_t.c .
+COPY edge_t.h .
+COPY edge_t.c .
+COPY node_t.h .
+COPY node_t.c .

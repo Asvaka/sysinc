@@ -249,6 +249,16 @@ list_t list_copy(list_t l) {
 	return new;
 }
 
+void list_map_void(list_t l, void (*func)(void*)) {
+	int i;
+
+	for (i = 0; i < l->list_size; i++) {
+		func(l->list_arr[i]);
+	}
+
+	return;
+}
+
 /*int main() {
 	list_t l = list_new();
 	list_t l2 = list_new();
