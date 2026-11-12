@@ -1,0 +1,6 @@
+FROM ubuntu
+
+RUN apt update && apt install libc-dev gcc libgmp3-dev vim valgrind python3 -y
+
+COPY graph_t.h .
+COPY graph_t.c .
